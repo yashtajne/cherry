@@ -8,29 +8,13 @@ Cherry is a build tool for C and C++ projects that automates the compilation and
 - **vcpkg Integration**: Add and manage vcpkg packages in your projects.
 - **Cross-Platform Support**: Its entirely written in go so it will work on Windows, macOS, and Linux.
 
-## Installation
+## How it works
 
-To install Cherry run this command  
-you must have go (golang) installed in your system
+Cherry compiles each source file separately in different processes. All compilation and linking commands are executed by the application itself, without relying on external build scripts.
 
-```sh
-go install github.com/yashtajne/cherry
-```
+It does not make use of MakeFiles and does not create any make files either.
 
-Then verify the installation by running
-make sure $GOBIN path is set
-
-```sh
-cherry version
-```
-
-### Initializing a project
-
-To create a C/C++ project, run this command:
-
-```sh
-cherry init <your-project-name>
-```
+It keeps track of file modifications in a log file (`cherry.log`). When a file is modified, It will automatically recompile only the changed files. All the compiled files will be cached.
 
 #### Project Directory structure
 
@@ -45,28 +29,33 @@ cherry init <your-project-name>
 └── cherry.log
 ```
 
-### Adding vcpkg Packages
+### Configuration File
 
-To add a vcpkg package to your project, use the following command:
+It used .toml as its configuration language
+The config file ``` cherry.toml ``` contains
+Project information, Build system information and list of packages
 
-```sh
-cherry add <package-name>
-```
+```toml
+[Project]
+  name = "project_name"
+  description = "description of the project"
+  version = "1.0"
 
-You must have vcpkg installed and the package installed in your system locally.
+[Build]
+  os = "linux"
+  shell = "/path/to/shell"
+  compiler = "g++" # will be gcc for c projects
+  includedir = "/path/to/include/directory"
+  libdir = "/path/to/lib/directory"
 
-### Build executable
+[[Packages]]
+  name = "package_name"
+  description = "package_description"
+  url = ""
+  version = "package_version"
+  libs = "\"-L${libdir}\" -libs" # libraries
+  cflags = "\"-I${includedir}\"" # Compilation flags
 
-To build your project, run this command:
-
-```sh
-cherry make
-```
-
-Then run your executable using this command:
-
-```sh
-cherry run
 ```
 
 ## License
