@@ -7,12 +7,17 @@ import (
 	"github.com/yashtajne/cherry/cmds"
 )
 
-const Version string = "1.0.0"
+const Version string = "1.0.1"
 
 func main() {
 	pwd, err := os.Getwd()
 	if err != nil {
 		fmt.Printf("Error (cannot get work directory): %v", err)
+	}
+
+	if len(os.Args) < 2 {
+		fmt.Printf("Error: <command> not provided")
+		return
 	}
 
 	switch os.Args[1] {
