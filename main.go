@@ -2,60 +2,83 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
+	"github.com/urfave/cli/v2"
 	"github.com/yashtajne/cherry/cmds"
+	. "github.com/yashtajne/cherry/utils"
 )
 
 const Version string = "1.0.1"
 
 func main() {
-	pwd, err := os.Getwd()
+	pwd, err := GetWorkDir()
 	if err != nil {
-		fmt.Printf("Error (cannot get work directory): %v", err)
+		log.Fatal(err)
 	}
 
-	if len(os.Args) < 2 {
-		fmt.Printf("Error: <command> not provided")
-		return
+	app := &cli.App{
+		Name:    "cherry",
+		Usage:   "A C/C++ Build tool",
+		Version: Version,
+		Action: func(c *cli.Context) error {
+			cmds.Help("")
+			return nil
+		},
+		Commands: []*cli.Command{
+			{
+				Name:  "version",
+				Usage: "Print the version",
+				Action: func(c *cli.Context) error {
+					cmds.Version(Version)
+					return nil
+				},
+			},
+			{
+				Name:  "help",
+				Usage: "Show help information",
+				Action: func(c *cli.Context) error {
+					cmds.Help("")
+					return nil
+				},
+			},
+			{
+				Name:      "init",
+				Usage:     "Initialize a new project",
+				ArgsUsage: "<project_name>",
+				Action: func(c *cli.Context) error {
+					if c.NArg() < 1 {
+						return fmt.Errorf("Error: <project_name> not provided")
+					}
+					cmds.Initalize(pwd, c.Args().Get(0))
+					return nil
+				},
+			},
+			{
+				Name:  "bake",
+				Usage: "Build the project",
+				Action: func(c *cli.Context) error {
+					cmds.Make(pwd)
+					return nil
+				},
+			},
+			{
+				Name:  "add",
+				Usage: "Add a new package (library) to the project",
+				Action: func(c *cli.Context) error {
+					if c.NArg() < 1 {
+						return fmt.Errorf("Error: <package_name> not provided")
+					}
+					cmds.Add(pwd, c.Args().Get(0))
+					return nil
+				},
+			},
+		},
 	}
 
-	switch os.Args[1] {
-	case "version":
-		cmds.Version(Version)
-		break
-	case "help":
-		cmds.Help("")
-		break
-	case "init":
-		if len(os.Args) < 3 {
-			fmt.Printf("Error: <project_name> not provided")
-			return
-		}
-		cmds.Initalize(pwd, os.Args[2])
-		break
-	case "make":
-		cmds.Make(pwd)
-		break
-	case "add":
-		if len(os.Args) < 3 {
-			fmt.Printf("Error: <package_name> not provided")
-			return
-		}
-		cmds.Add(pwd, os.Args[2])
-		break
-	case "remove":
-		if len(os.Args) < 3 {
-			fmt.Printf("Error: <package_name> not provided")
-			return
-		}
-		cmds.Remove(pwd, os.Args[2])
-		break
-	case "run":
-		cmds.Run(pwd)
-		break
-	default:
-		fmt.Print("Invalid command.")
-		break
+	err = app.Run(os.Args)
+	if err != nil {
+		log.Fatal(err)
 	}
 }

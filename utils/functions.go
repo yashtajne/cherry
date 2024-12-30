@@ -13,6 +13,14 @@ import (
 
 var Re = regexp.MustCompile(`_.*`)
 
+func GetWorkDir() (string, error) {
+	pwd, err := os.Getwd()
+	if err != nil {
+		return "", fmt.Errorf("Error (cannot get work directory): %v", err)
+	}
+	return pwd, nil
+}
+
 func GetCompilerPath(compiler string) (string, error) {
 	compiler_path, err := exec.LookPath(compiler)
 	if err != nil {
