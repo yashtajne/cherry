@@ -4,9 +4,14 @@ import (
 	"fmt"
 )
 
+var PrintVersionMessage = `
+Cherry v%s
+Copyright (C) 2024 Yash Tajne
+
+This program may be freely redistributed
+under the terms of the MIT License.
+`
+
 func Version(version string) {
-	fmt.Println("Cherry ", version)
-	fmt.Println("Copyright (C) 2024 Yash Tajne")
-	fmt.Println("This program may be freely redistributed")
-	fmt.Println("under the terms of the MIT License.")
+	fmt.Printf(PrintVersionMessage, version)
 }

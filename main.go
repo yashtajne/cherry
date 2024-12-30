@@ -53,7 +53,7 @@ func main() {
 				},
 			},
 			{
-				Name:  "bake",
+				Name:  "make",
 				Usage: "Build the project",
 				Action: func(c *cli.Context) error {
 					cmds.Make(pwd)
