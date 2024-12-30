@@ -10,7 +10,7 @@ import (
 	. "github.com/yashtajne/cherry/utils"
 )
 
-const Version string = "1.1.0"
+const Version string = "1.1.1"
 
 func main() {
 	pwd, err := GetWorkDir()
@@ -19,13 +19,10 @@ func main() {
 	}
 
 	app := &cli.App{
-		Name:    "cherry",
-		Usage:   "A C/C++ Build tool",
-		Version: Version,
-		Action: func(c *cli.Context) error {
-			cmds.Version(Version)
-			return nil
-		},
+		Name:           "cherry",
+		Usage:          "A C/C++ Build tool",
+		Version:        Version,
+		DefaultCommand: "version",
 		Commands: []*cli.Command{
 			{
 				Name:  "version",
