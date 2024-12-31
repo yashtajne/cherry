@@ -1,14 +1,16 @@
 package cmds
 
 import (
+	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	. "github.com/yashtajne/cherry/utils"
 )
 
-func Initalize(work_dir_path, project_name string) {
-	files, err := os.ReadDir(work_dir_path)
+func Initalize(project_name string) {
+	files, err := os.ReadDir(ProjectWorkDirectoryPath)
 	if err != nil {
 		fmt.Printf("Error occured invalid direcotry path: %s\n", err)
 		return
@@ -19,41 +21,112 @@ func Initalize(work_dir_path, project_name string) {
 		return
 	}
 
-	err = os.MkdirAll(work_dir_path+"/build/o", 0755)
+	main_file_name := ""
+
+	fmt.Println("What type of project would you like to create?")
+	fmt.Println("(A) [C project]")
+	fmt.Println("(B) [C++ project]")
+	fmt.Println("(Q) Quit")
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("\nEnter your choice: ")
+
+	char, err := reader.ReadByte()
 	if err != nil {
-		fmt.Printf("Cannot create build objects directory\nError: %v", err)
+		fmt.Println("Error reading input:", err)
 		return
 	}
-	fmt.Println("Created build objects directroy")
 
-	err = os.MkdirAll(work_dir_path+"/build/out", 0755)
-	if err != nil {
-		fmt.Printf("Cannot create build output directory\nError: %v", err)
+	switch char {
+	case 'A', 'a':
+		main_file_name = "main.c"
+	case 'B', 'b':
+		main_file_name = "main.cpp"
+	case 'Q', 'q':
+		fmt.Println("Exiting...")
+		return
+	default:
+		fmt.Println("Invalid choice. Exiting...")
 		return
 	}
-	fmt.Println("Created build output directroy")
 
-	err = os.MkdirAll(work_dir_path+"/src", 0755)
+	create_config_file(project_name)
+	create_log_file()
+	create_build_dir()
+	create_include_dir()
+	create_lib_dir()
+	create_src_dir()
+	create_main_file(main_file_name)
+	fmt.Printf("Project '%s' initialized successfully!\n", project_name)
+}
+
+func create_src_dir() {
+	err := os.MkdirAll(ProjectSrcDirectoryPath, 0755)
 	if err != nil {
-		fmt.Printf("Cannot create source directory\nError: %v", err)
+		fmt.Printf("Error (while creating source directory): %v\n", err)
 		return
 	}
-	fmt.Println("Created source directroy")
+}
 
-	file, err := os.Create("cherry.log")
+func create_build_dir() {
+	err := os.MkdirAll(filepath.Join(ProjectBuildDirectoryPath, "o"), 0755)
 	if err != nil {
-		fmt.Printf("Cannot create cherry.log file\nError: %v", err)
+		fmt.Printf("Error (while creating build directory): %v\n", err)
+		return
+	}
+	err = os.MkdirAll(filepath.Join(ProjectBuildDirectoryPath, "out"), 0755)
+	if err != nil {
+		fmt.Printf("Error (while creating source directory): %v\n", err)
+		return
+	}
+}
+
+func create_include_dir() {
+	err := os.MkdirAll(ProjectIncludeDirectoryPath, 0755)
+	if err != nil {
+		fmt.Printf("Error (while creating include directory): %v\n", err)
+		return
+	}
+}
+
+func create_lib_dir() {
+	err := os.MkdirAll(filepath.Join(ProjectLibDirectoryPath, "pkgconfig"), 0755)
+	if err != nil {
+		fmt.Printf("Error (while creating lib directory): %v\n", err)
+		return
+	}
+}
+
+func create_log_file() {
+	file, err := os.Create(ProjectLogFilePath)
+	if err != nil {
+		fmt.Printf("Error (while creating log file): %v\n", err)
 		return
 	}
 	defer file.Close()
-	fmt.Println("Created cherry.log file")
+}
 
-	err = InitConfig(work_dir_path, project_name)
+func create_config_file(project_name string) {
+	err := InitConfig(ProjectWorkDirectoryPath, project_name)
 	if err != nil {
-		fmt.Printf("Cannot create cherry.toml file\nError: %v", err)
+		fmt.Printf("Error (while creating config file): %v\n", err)
 		return
 	}
-	fmt.Println("Created cherry.toml file")
+}
 
-	fmt.Printf("Successfully initialized %s directory\n", work_dir_path)
+func create_main_file(main_file_name string) {
+	main_file_path := filepath.Join(ProjectSrcDirectoryPath, main_file_name)
+
+	main_file, err := os.Create(main_file_path)
+	if err != nil {
+		fmt.Printf("Error (while creating %s file): %v\n", main_file_path, err)
+		return
+	}
+
+	defer main_file.Close()
+
+	if main_file_name == "main.c" {
+		main_file.WriteString(DefaultMainCFile)
+	} else if main_file_name == "main.cpp" {
+		main_file.WriteString(DefaultMainCPPFile)
+	}
 }

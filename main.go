@@ -4,19 +4,29 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/urfave/cli/v2"
 	"github.com/yashtajne/cherry/cmds"
 	. "github.com/yashtajne/cherry/utils"
 )
 
-const Version string = "1.2.3"
+const Version string = "1.2.5"
 
 func main() {
 	pwd, err := GetWorkDir()
 	if err != nil {
 		log.Fatal(err)
+		return
 	}
+
+	ProjectWorkDirectoryPath = pwd
+	ProjectSrcDirectoryPath = filepath.Join(ProjectWorkDirectoryPath, "/src")
+	ProjectBuildDirectoryPath = filepath.Join(ProjectWorkDirectoryPath, "/build")
+	ProjectIncludeDirectoryPath = filepath.Join(ProjectWorkDirectoryPath, "/include")
+	ProjectLibDirectoryPath = filepath.Join(ProjectWorkDirectoryPath, "/lib")
+	ProjectConfigFilePath = filepath.Join(ProjectWorkDirectoryPath, "/cherry.toml")
+	ProjectLogFilePath = filepath.Join(ProjectWorkDirectoryPath, "/cherry.log")
 
 	app := &cli.App{
 		Name:           "cherry",
@@ -48,7 +58,7 @@ func main() {
 					if c.NArg() < 1 {
 						return fmt.Errorf("Error: <project_name> not provided")
 					}
-					cmds.Initalize(pwd, c.Args().Get(0))
+					cmds.Initalize(c.Args().Get(0))
 					return nil
 				},
 			},
@@ -82,6 +92,14 @@ func main() {
 			{
 				Name:  "remove",
 				Usage: "Remove a package (library) from the project",
+				Action: func(c *cli.Context) error {
+					cmds.Remove(pwd, c.Args().Get(0))
+					return nil
+				},
+			},
+			{
+				Name:  "run",
+				Usage: "Execute the compiled binary in the current terminal",
 				Action: func(c *cli.Context) error {
 					cmds.Remove(pwd, c.Args().Get(0))
 					return nil
