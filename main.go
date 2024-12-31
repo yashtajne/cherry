@@ -10,7 +10,7 @@ import (
 	. "github.com/yashtajne/cherry/utils"
 )
 
-const Version string = "1.1.1"
+const Version string = "1.2.1"
 
 func main() {
 	pwd, err := GetWorkDir()
@@ -68,6 +68,14 @@ func main() {
 						return fmt.Errorf("Error: <package_name> not provided")
 					}
 					cmds.Add(pwd, c.Args().Get(0))
+					return nil
+				},
+			},
+			{
+				Name:  "update",
+				Usage: "Update cherry to the latest version",
+				Action: func(c *cli.Context) error {
+					cmds.Update()
 					return nil
 				},
 			},
