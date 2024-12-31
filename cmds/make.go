@@ -13,7 +13,7 @@ import (
 
 func Make(work_dir_path string) {
 	// read project config file
-	project_config, err := ReadConfig(work_dir_path + "/cherry.toml")
+	project_config, err := ReadProjectConfig(work_dir_path + "/cherry.toml")
 	if err != nil {
 		fmt.Printf("Error (reading project config): %v", err)
 		return

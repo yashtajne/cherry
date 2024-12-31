@@ -35,6 +35,14 @@ func Add(work_dir_path, package_name string) {
 			}
 		}
 	}
+
+	pkg, err := ReadPackageConfig(filepath.Join(work_dir_path, "lib", "pkgconfig", package_name+".pc"))
+	if err != nil {
+		fmt.Printf("Error (while reading package config): %v", err)
+		return
+	}
+
+	AddPkgToConfig(filepath.Join(work_dir_path, "cherry.toml"), *pkg)
 }
 
 func _add(work_dir_path, package_dir_path string) error {

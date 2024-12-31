@@ -10,7 +10,7 @@ import (
 	. "github.com/yashtajne/cherry/utils"
 )
 
-const Version string = "1.2.1"
+const Version string = "1.2.3"
 
 func main() {
 	pwd, err := GetWorkDir()
@@ -76,6 +76,14 @@ func main() {
 				Usage: "Update cherry to the latest version",
 				Action: func(c *cli.Context) error {
 					cmds.Update()
+					return nil
+				},
+			},
+			{
+				Name:  "remove",
+				Usage: "Remove a package (library) from the project",
+				Action: func(c *cli.Context) error {
+					cmds.Remove(pwd, c.Args().Get(0))
 					return nil
 				},
 			},

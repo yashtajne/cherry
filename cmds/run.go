@@ -10,7 +10,7 @@ import (
 )
 
 func Run(work_dir_path string) {
-	project_config, err := ReadConfig(work_dir_path + "/cherry.toml")
+	project_config, err := ReadProjectConfig(work_dir_path + "/cherry.toml")
 	if err != nil {
 		fmt.Printf("Error (reading project config): %v\n", err)
 		return

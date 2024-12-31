@@ -10,13 +10,48 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-func ReadConfig(config_file_path string) (*ProjectConfig, error) {
+func ReadProjectConfig(config_file_path string) (*ProjectConfig, error) {
 	var config ProjectConfig
 	_, err := toml.DecodeFile(config_file_path, &config)
 	if err != nil {
 		return nil, err
 	}
 	return &config, nil
+}
+
+func RemovePkgFromConfig(config_file_path, package_name string) {
+	data, err := os.ReadFile(config_file_path)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	var project_config ProjectConfig
+
+	err = toml.Unmarshal(data, &project_config)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	for i, pkg := range project_config.Packages {
+		if pkg.Name == package_name {
+			project_config.Packages = append(project_config.Packages[:i], project_config.Packages[i+1:]...)
+			break
+		}
+	}
+
+	data, err = toml.Marshal(&project_config)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = os.WriteFile(config_file_path, data, os.ModePerm)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 }
 
 func AddPkgToConfig(config_file_path string, pkg Pkg) {
@@ -54,8 +89,6 @@ func AddPkgToConfig(config_file_path string, pkg Pkg) {
 		fmt.Println(err)
 		return
 	}
-
-	fmt.Println("TOML file updated successfully!")
 }
 
 func ReadPackageConfig(packageConfigPath string) (*Pkg, error) {
