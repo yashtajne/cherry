@@ -3,7 +3,7 @@ package utils
 import (
 	"fmt"
 	"io"
-	"log"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -62,114 +62,47 @@ func SrcFileExist(src_files []os.DirEntry, o_file_name string) bool {
 	return false
 }
 
-func CopyDir(src, dst string) error {
-	var err error
-	var fds []os.DirEntry
-
-	fds, err = os.ReadDir(src)
-	if err != nil {
-		return err
-	}
-
-	err = os.MkdirAll(dst, os.ModePerm)
-	if err != nil {
-		return err
-	}
-
-	for _, fd := range fds {
-		srcfp := filepath.Join(src, fd.Name())
-		dstfp := filepath.Join(dst, fd.Name())
-
-		if fd.IsDir() {
-			err = CopyDir(srcfp, dstfp)
-			if err != nil {
-				return err
-			}
-		} else {
-			err = CopyFile(srcfp, dstfp)
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
 func CopyFile(src, dst string) error {
-	in, err := os.Open(src)
+	sourceFile, err := os.Open(src)
 	if err != nil {
 		return err
 	}
-	defer in.Close()
+	defer sourceFile.Close()
 
-	if _, err := os.Stat(dst); err == nil {
-		return nil
-	}
-
-	out, err := os.Create(dst)
+	destFile, err := os.Create(dst)
 	if err != nil {
 		return err
 	}
-	defer out.Close()
+	defer destFile.Close()
 
-	_, err = io.Copy(out, in)
+	_, err = io.Copy(destFile, sourceFile)
 	if err != nil {
 		return err
 	}
-	return nil
+
+	info, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+	return os.Chmod(dst, info.Mode())
 }
 
-func compareFiles(src, dst string) bool {
-	srcFile, err := os.Open(src)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer srcFile.Close()
-
-	dstFile, err := os.Open(dst)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer dstFile.Close()
-
-	srcContents, err := io.ReadAll(srcFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	dstContents, err := io.ReadAll(dstFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return string(dstContents) == string(srcContents)
-}
-
-func RemoveFiles(srcDir, dstDir string) error {
-	return filepath.Walk(srcDir, func(path string, info os.FileInfo, err error) error {
+func CopyDirectory(srcDir, dstDir string) error {
+	return filepath.Walk(srcDir, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		if !info.IsDir() {
-			relPath, err := filepath.Rel(srcDir, path)
-			if err != nil {
-				return err
-			}
-
-			dstPath := filepath.Join(dstDir, relPath)
-
-			if compareFiles(path, dstPath) {
-				err = os.Remove(dstPath)
-				if err != nil {
-					return err
-				}
-
-				fmt.Printf("Removed '%s'\n", dstPath)
-			}
+		relPath, err := filepath.Rel(srcDir, path)
+		if err != nil {
+			return err
 		}
+		targetPath := filepath.Join(dstDir, relPath)
 
-		return nil
+		if info.IsDir() {
+			return os.MkdirAll(targetPath, info.Mode())
+		} else {
+			return CopyFile(path, targetPath)
+		}
 	})
 }

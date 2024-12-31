@@ -3,62 +3,102 @@ package cmds
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 
 	. "github.com/yashtajne/cherry/utils"
 )
 
 func Add(work_dir_path, package_name string) {
-	if _, err := os.Stat(work_dir_path); err != nil {
-		if os.IsNotExist(err) {
-			fmt.Printf("Directory '%s' does not exist\n", work_dir_path)
-		} else {
-			fmt.Printf("Error checking directory: %v\n", err)
-		}
-	}
 
-	lib_dir_path := work_dir_path + "/lib"
-	include_dir_path := work_dir_path + "/include"
-
-	vcpkg_root, exists := os.LookupEnv("VCPKG_ROOT")
-	if !exists {
-		fmt.Println("Error $VCPKG_ROOT is not set")
+	// get $VCPKG_ROOT path
+	vcpkg_root := os.Getenv("VCPKG_ROOT")
+	if vcpkg_root == "" {
+		fmt.Println("Error: $VCPKG_ROOT is not set, make sure vcpkg is installed and $VCPKG_ROOT PATH is set")
 		return
 	}
 
-	vcpkg_packages_dir := vcpkg_root + "/packages"
-	vcpkg_packages, err := os.ReadDir(vcpkg_packages_dir)
+	vcpkg_packages_dir := filepath.Join(vcpkg_root, "packages")
+
+	packages, err := os.ReadDir(vcpkg_packages_dir)
 	if err != nil {
-		fmt.Printf("Error finding packages: %v\n", err)
+		fmt.Printf("Error (reading vcpkg packages): %v", err)
 		return
 	}
 
-	for _, vcpkg_package := range vcpkg_packages {
-		if Re.ReplaceAllString(vcpkg_package.Name(), "") == package_name && vcpkg_package.IsDir() {
-			vcpkg_package_include_dir := vcpkg_packages_dir + "/" + vcpkg_package.Name() + "/include"
-			vcpkg_package_lib_dir := vcpkg_packages_dir + "/" + vcpkg_package.Name() + "/lib"
-
-			if err := CopyDir(vcpkg_package_include_dir, include_dir_path); err != nil {
-				fmt.Printf("Error while adding this package: %v\n", err)
+	for _, _package := range packages {
+		_package_name := _package.Name()
+		if package_name == strings.Split(_package_name, "_")[0] {
+			if err := _add(work_dir_path, filepath.Join(vcpkg_packages_dir, _package_name)); err != nil {
+				fmt.Printf("Error (while adding vcpkg package): %v", err)
 				return
 			}
-			if err := CopyDir(vcpkg_package_lib_dir, lib_dir_path); err != nil {
-				fmt.Printf("Error while adding this package: %v\n", err)
-				return
-			}
+		}
+	}
+}
 
-			vcpkg_package_pc_file_path := work_dir_path + "/lib/pkgconfig/" + package_name + ".pc"
-			pkg, err := ReadPackageConfig(vcpkg_package_pc_file_path)
-			if err != nil {
-				fmt.Printf("Error while reading this package config: %v\n", err)
-				return
-			}
+func _add(work_dir_path, package_dir_path string) error {
+	package_include_dir_path := filepath.Join(package_dir_path, "include") // package include directory
+	package_lib_dir_path := filepath.Join(package_dir_path, "lib")         // package lib directory
 
-			AddPkgToConfig(work_dir_path+"/cherry.toml", *pkg)
+	work_include_dir_path := filepath.Join(work_dir_path, "include") // project include directory
+	work_lib_dir_path := filepath.Join(work_dir_path, "lib")         // project lib directory
 
-			fmt.Printf("Succesfully added package: %s\n", package_name)
-			return
+	// Check if the include directory exists, and create it if not
+	if _, err := os.Stat(work_include_dir_path); os.IsNotExist(err) {
+		if err := os.MkdirAll(work_include_dir_path, os.ModePerm); err != nil {
+			return fmt.Errorf("error creating include directory: %w", err)
 		}
 	}
 
-	fmt.Printf("Package not installed locally: %s\nInstall the package using this command: vcpkg install %s\n", package_name, package_name)
+	// Check if the lib directory exists, and create it if not
+	if _, err := os.Stat(work_lib_dir_path); os.IsNotExist(err) {
+		if err := os.MkdirAll(work_lib_dir_path, os.ModePerm); err != nil {
+			return fmt.Errorf("error creating lib directory: %w", err)
+		}
+	}
+
+	include_contents, err := os.ReadDir(package_include_dir_path)
+	if err != nil {
+		return err
+	}
+
+	lib_contents, err := os.ReadDir(package_lib_dir_path)
+	if err != nil {
+		return err
+	}
+
+	for _, include_content := range include_contents {
+		include_content_name := include_content.Name()
+		if include_content.IsDir() {
+			if err := CopyDirectory(
+				filepath.Join(package_include_dir_path, include_content_name),
+				filepath.Join(work_include_dir_path, include_content_name),
+			); err != nil {
+				return err
+			}
+		}
+	}
+
+	for _, lib_content := range lib_contents {
+		lib_content_name := lib_content.Name()
+
+		if lib_content.IsDir() {
+			if err := CopyDirectory(
+				filepath.Join(package_lib_dir_path, lib_content_name),
+				filepath.Join(work_lib_dir_path, lib_content_name),
+			); err != nil {
+				return fmt.Errorf("error copying directory %s: %w", lib_content_name, err)
+			}
+		} else {
+			if err := CopyFile(
+				filepath.Join(package_lib_dir_path, lib_content_name),
+				filepath.Join(work_lib_dir_path, lib_content_name),
+			); err != nil {
+				return fmt.Errorf("error copying file %s: %w", lib_content_name, err)
+			}
+		}
+	}
+
+	return nil
 }
