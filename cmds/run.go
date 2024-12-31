@@ -9,14 +9,14 @@ import (
 	. "github.com/yashtajne/cherry/utils"
 )
 
-func Run(work_dir_path string) {
-	project_config, err := ReadProjectConfig(work_dir_path + "/cherry.toml")
+func Run() {
+	project_config, err := ReadProjectConfig(ProjectConfigFilePath)
 	if err != nil {
 		fmt.Printf("Error (reading project config): %v\n", err)
 		return
 	}
 
-	exe_path := filepath.Join(work_dir_path, "build", "out", project_config.Project.Name+".out")
+	exe_path := filepath.Join(ProjectWorkDirectoryPath, "build", "out", project_config.Project.Name+".out")
 
 	if _, err := os.Stat(exe_path); err != nil {
 		fmt.Printf("Error (executable not found): %v\n", err)

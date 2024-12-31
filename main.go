@@ -101,7 +101,7 @@ func main() {
 				Name:  "run",
 				Usage: "Execute the compiled binary in the current terminal",
 				Action: func(c *cli.Context) error {
-					cmds.Remove(pwd, c.Args().Get(0))
+					cmds.Run()
 					return nil
 				},
 			},
