@@ -26,14 +26,26 @@ func Add(work_dir_path, package_name string) {
 		return
 	}
 
+	package_path := ""
 	for _, _package := range packages {
 		_package_name := _package.Name()
 		if package_name == strings.Split(_package_name, "_")[0] {
-			if err := _add(work_dir_path, filepath.Join(vcpkg_packages_dir, _package_name)); err != nil {
-				fmt.Printf("Error (while adding vcpkg package): %v", err)
+			package_path = filepath.Join(vcpkg_packages_dir, _package_name)
+			break
+		}
+	}
+
+	if err := _add(work_dir_path, package_path); err != nil {
+		if err.Error() == PACKAGE_NOT_INSTALLED_LOCALLY {
+			if PromptWouldYouLikeToInstallPackage(package_name) {
+				InstallPkg(vcpkg_root, package_name)
 				return
 			}
+			fmt.Printf("Okay, Exiting...")
+			return
 		}
+		fmt.Printf("Error (while adding vcpkg package): %v", err)
+		return
 	}
 
 	pkg, err := ReadPackageConfig(filepath.Join(work_dir_path, "lib", "pkgconfig", package_name+".pc"))
@@ -64,6 +76,11 @@ func _add(work_dir_path, package_dir_path string) error {
 		if err := os.MkdirAll(work_lib_dir_path, os.ModePerm); err != nil {
 			return fmt.Errorf("error creating lib directory: %w", err)
 		}
+	}
+
+	// Check if the package directory exists, if not return error
+	if _, err := os.Stat(package_dir_path); os.IsNotExist(err) {
+		return fmt.Errorf(PACKAGE_NOT_INSTALLED_LOCALLY)
 	}
 
 	include_contents, err := os.ReadDir(package_include_dir_path)
