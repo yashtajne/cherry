@@ -65,17 +65,12 @@ func _add(work_dir_path, package_dir_path string) error {
 	work_lib_dir_path := filepath.Join(work_dir_path, "lib")         // project lib directory
 
 	// Check if the include directory exists, and create it if not
-	if _, err := os.Stat(work_include_dir_path); os.IsNotExist(err) {
-		if err := os.MkdirAll(work_include_dir_path, os.ModePerm); err != nil {
-			return fmt.Errorf("error creating include directory: %w", err)
-		}
+	if _, err := os.Stat(package_include_dir_path); os.IsNotExist(err) {
+		return fmt.Errorf("Error (not a valid package): %v\n", err)
 	}
-
 	// Check if the lib directory exists, and create it if not
-	if _, err := os.Stat(work_lib_dir_path); os.IsNotExist(err) {
-		if err := os.MkdirAll(work_lib_dir_path, os.ModePerm); err != nil {
-			return fmt.Errorf("error creating lib directory: %w", err)
-		}
+	if _, err := os.Stat(package_lib_dir_path); os.IsNotExist(err) {
+		return fmt.Errorf("Error (not a valid package): %v\n", err)
 	}
 
 	// Check if the package directory exists, if not return error
