@@ -11,7 +11,7 @@ import (
 	. "github.com/yashtajne/cherry/utils"
 )
 
-const Version string = "1.2.5"
+const Version string = "1.2.6"
 
 func main() {
 	pwd, err := GetWorkDir()

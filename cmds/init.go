@@ -56,6 +56,7 @@ func Initalize(project_name string) {
 	create_lib_dir()
 	create_src_dir()
 	create_main_file(main_file_name)
+	create_gitignore_file()
 	fmt.Printf("Project '%s' initialized successfully!\n", project_name)
 }
 
@@ -129,4 +130,16 @@ func create_main_file(main_file_name string) {
 	} else if main_file_name == "main.cpp" {
 		main_file.WriteString(DefaultMainCPPFile)
 	}
+}
+
+func create_gitignore_file() {
+	gitignore_file, err := os.Create(filepath.Join(ProjectWorkDirectoryPath, ".gitignore"))
+	if err != nil {
+		fmt.Printf("Error (while creating .gitignore file): %v\n", err)
+		return
+	}
+
+	defer gitignore_file.Close()
+
+	gitignore_file.WriteString(DefaultCommandGitignoreFile)
 }

@@ -25,3 +25,8 @@ int main(int argc, char** argv) {
 	return 0;
 }
 `
+
+var DefaultCommandGitignoreFile = `
+build/*
+include/*
+`
