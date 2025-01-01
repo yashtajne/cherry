@@ -10,17 +10,17 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-func ReadProjectConfig(config_file_path string) (*ProjectConfig, error) {
+func GetProjectConfig() (*ProjectConfig, error) {
 	var config ProjectConfig
-	_, err := toml.DecodeFile(config_file_path, &config)
+	_, err := toml.DecodeFile(ProjectConfigFilePath, &config)
 	if err != nil {
 		return nil, err
 	}
 	return &config, nil
 }
 
-func RemovePkgFromConfig(config_file_path, package_name string) {
-	data, err := os.ReadFile(config_file_path)
+func RemovePkgFromConfig(package_name string) {
+	data, err := os.ReadFile(ProjectConfigFilePath)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -47,15 +47,15 @@ func RemovePkgFromConfig(config_file_path, package_name string) {
 		return
 	}
 
-	err = os.WriteFile(config_file_path, data, os.ModePerm)
+	err = os.WriteFile(ProjectConfigFilePath, data, os.ModePerm)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 }
 
-func AddPkgToConfig(config_file_path string, pkg Pkg) {
-	data, err := os.ReadFile(config_file_path)
+func AddPkgToConfig(pkg Pkg) {
+	data, err := os.ReadFile(ProjectConfigFilePath)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -84,7 +84,7 @@ func AddPkgToConfig(config_file_path string, pkg Pkg) {
 		return
 	}
 
-	err = os.WriteFile(config_file_path, data, os.ModePerm)
+	err = os.WriteFile(ProjectConfigFilePath, data, os.ModePerm)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -141,13 +141,13 @@ func ReadPackageConfig(packageConfigPath string) (*Pkg, error) {
 	return pkg, nil
 }
 
-func InitConfig(work_dir_path, project_name string) error {
+func InitConfig(work_dir_path, project_name, compiler string) error {
 	var config ProjectConfig
 
 	config.Project.Name = project_name                   // set project name
 	config.Build.IncludeDir = work_dir_path + "/include" // set include directory path
 	config.Build.LibDir = work_dir_path + "/lib"         // set lib directory path
-	config.Build.Compiler = "g++"                        // set compiler path
+	config.Build.Compiler = compiler                     // set compiler path
 	config.Build.OS = runtime.GOOS                       // set operating system path
 	config.Build.Shell = os.Getenv("SHELL")              // set shell path
 	if config.Build.Shell == "" {
@@ -159,7 +159,7 @@ func InitConfig(work_dir_path, project_name string) error {
 		return err
 	}
 
-	config_file, err := os.OpenFile(work_dir_path+"/cherry.toml", os.O_WRONLY|os.O_CREATE, 0666)
+	config_file, err := os.OpenFile(ProjectConfigFilePath, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return err
 	}

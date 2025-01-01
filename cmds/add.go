@@ -42,7 +42,7 @@ func Add(work_dir_path, package_name string) {
 		return
 	}
 
-	AddPkgToConfig(filepath.Join(work_dir_path, "cherry.toml"), *pkg)
+	AddPkgToConfig(*pkg)
 }
 
 func _add(work_dir_path, package_dir_path string) error {

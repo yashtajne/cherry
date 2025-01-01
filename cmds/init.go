@@ -22,6 +22,7 @@ func Initalize(project_name string) {
 	}
 
 	main_file_name := ""
+	compiler := ""
 
 	fmt.Println("What type of project would you like to create?")
 	fmt.Println("(A) [C project]")
@@ -39,8 +40,10 @@ func Initalize(project_name string) {
 	switch char {
 	case 'A', 'a':
 		main_file_name = "main.c"
+		compiler = "gcc"
 	case 'B', 'b':
 		main_file_name = "main.cpp"
+		compiler = "g++"
 	case 'Q', 'q':
 		fmt.Println("Exiting...")
 		return
@@ -49,7 +52,7 @@ func Initalize(project_name string) {
 		return
 	}
 
-	create_config_file(project_name)
+	create_config_file(project_name, compiler)
 	create_log_file()
 	create_build_dir()
 	create_include_dir()
@@ -106,8 +109,8 @@ func create_log_file() {
 	defer file.Close()
 }
 
-func create_config_file(project_name string) {
-	err := InitConfig(ProjectWorkDirectoryPath, project_name)
+func create_config_file(project_name, compiler string) {
+	err := InitConfig(ProjectWorkDirectoryPath, project_name, compiler)
 	if err != nil {
 		fmt.Printf("Error (while creating config file): %v\n", err)
 		return

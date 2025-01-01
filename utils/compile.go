@@ -46,7 +46,7 @@ func Compile(project_config *ProjectConfig, src_file_path, output_file_path stri
 		return err
 	}
 
-	fmt.Printf("Compiled %s\n", src_file_path)
+	fmt.Printf("Compiled %s\n", filepath.Base(src_file_path))
 	return nil
 }
 

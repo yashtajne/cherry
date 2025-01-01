@@ -10,13 +10,18 @@ import (
 )
 
 func Run() {
-	project_config, err := ReadProjectConfig(ProjectConfigFilePath)
+	project_config, err := GetProjectConfig()
 	if err != nil {
 		fmt.Printf("Error (reading project config): %v\n", err)
 		return
 	}
 
-	exe_path := filepath.Join(ProjectWorkDirectoryPath, "build", "out", project_config.Project.Name+".out")
+	exe_path := ""
+	if project_config.Build.OS == "windows" {
+		exe_path = filepath.Join(ProjectWorkDirectoryPath, "build", "out", project_config.Project.Name+".exe")
+	} else {
+		exe_path = filepath.Join(ProjectWorkDirectoryPath, "build", "out", project_config.Project.Name)
+	}
 
 	if _, err := os.Stat(exe_path); err != nil {
 		fmt.Printf("Error (executable not found): %v\n", err)

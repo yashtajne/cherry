@@ -27,5 +27,5 @@ func Remove(work_dir_path, package_name string) {
 		}
 	}
 
-	RemovePkgFromConfig(filepath.Join(work_dir_path, "cherry.toml"), package_name)
+	RemovePkgFromConfig(package_name)
 }

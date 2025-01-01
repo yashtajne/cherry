@@ -23,7 +23,6 @@ type Build struct {
 	OS         string `toml:"os"`
 	Shell      string `toml:"shell"`
 	Compiler   string `toml:"compiler"`
-	MainFile   string `toml:"mainFile"`
 	IncludeDir string `toml:"includedir"`
 	LibDir     string `toml:"libdir"`
 }

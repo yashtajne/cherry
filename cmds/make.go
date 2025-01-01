@@ -15,7 +15,7 @@ import (
 // link all the object files and make output executable
 func Make() {
 	// read project config file
-	project_config, err := ReadProjectConfig(ProjectConfigFilePath)
+	project_config, err := GetProjectConfig()
 	if err != nil {
 		fmt.Printf("Error (reading project config): %v", err)
 		return
@@ -55,7 +55,6 @@ func Make() {
 	}
 
 	build_dir_o_path := filepath.Join(ProjectBuildDirectoryPath, "o")
-	build_dir_out_path := filepath.Join(ProjectBuildDirectoryPath, "out")
 
 	// get a list of object files
 	o_files, err := os.ReadDir(filepath.Join(ProjectBuildDirectoryPath, "o"))
@@ -140,7 +139,7 @@ func Make() {
 	// update log file
 	log_file.WriteString(new_log_file.String())
 
-	if !_link(project_config, build_dir_o_path, build_dir_out_path) {
+	if !_link(project_config, build_dir_o_path) {
 		return
 	}
 }
@@ -157,7 +156,7 @@ func _compile(project_config *ProjectConfig, src_dir_path, src_file_name, src_fi
 	return true
 }
 
-func _link(project_config *ProjectConfig, build_dir_o_path, build_dir_out_path string) bool {
+func _link(project_config *ProjectConfig, build_dir_o_path string) bool {
 	o_files, err := os.ReadDir(build_dir_o_path)
 	if err != nil {
 		fmt.Printf("Error (reading object files): %v", err)
@@ -172,7 +171,6 @@ func _link(project_config *ProjectConfig, build_dir_o_path, build_dir_out_path s
 	if err := Link(
 		project_config, // project config
 		&o,             // object files
-		filepath.Join(build_dir_out_path, project_config.Project.Name+".out"), // output path for executable
 	); err != nil {
 		fmt.Printf("Error (linking object files): %v", err)
 		return false

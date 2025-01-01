@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"fmt"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
-func Link(project_config *ProjectConfig, o *[]string, output_file_path string) error {
+func Link(project_config *ProjectConfig, o *[]string) error {
 	if len(*o) == 0 {
 		return fmt.Errorf("No object files")
 	}
@@ -17,6 +18,9 @@ func Link(project_config *ProjectConfig, o *[]string, output_file_path string) e
 	if err != nil {
 		return err
 	}
+
+	// output file path
+	output_file_path := filepath.Join(ProjectBuildDirectoryPath, "out", project_config.Project.Name)
 
 	// create args for link command
 	args := CreateLinkingCommandArgs(project_config)
