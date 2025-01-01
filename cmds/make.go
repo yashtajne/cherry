@@ -11,21 +11,18 @@ import (
 	. "github.com/yashtajne/cherry/utils"
 )
 
-func Make(work_dir_path string) {
+// compiles all the files and cache them.
+// link all the object files and make output executable
+func Make() {
 	// read project config file
-	project_config, err := ReadProjectConfig(work_dir_path + "/cherry.toml")
+	project_config, err := ReadProjectConfig(ProjectConfigFilePath)
 	if err != nil {
 		fmt.Printf("Error (reading project config): %v", err)
 		return
 	}
 
-	// file paths
-	build_dir_o_path := work_dir_path + "/build/o"
-	build_dir_out_path := work_dir_path + "/build/out"
-	src_dir_path := work_dir_path + "/src"
-
 	// open log file
-	log_file, err := os.OpenFile(work_dir_path+"/cherry.log", os.O_RDWR, 0644)
+	log_file, err := os.OpenFile(ProjectLogFilePath, os.O_RDWR, 0644)
 	if err != nil {
 		fmt.Printf("Error (reading log file): %v", err)
 		return
@@ -57,15 +54,18 @@ func Make(work_dir_path string) {
 		fmt.Printf("Error (scanner): %v", err)
 	}
 
+	build_dir_o_path := filepath.Join(ProjectBuildDirectoryPath, "o")
+	build_dir_out_path := filepath.Join(ProjectBuildDirectoryPath, "out")
+
 	// get a list of object files
-	o_files, err := os.ReadDir(build_dir_o_path)
+	o_files, err := os.ReadDir(filepath.Join(ProjectBuildDirectoryPath, "o"))
 	if err != nil {
 		fmt.Printf("Error (reading object files): %v", err)
 		return
 	}
 
 	// get a list of source files
-	src_files, err := os.ReadDir(src_dir_path)
+	src_files, err := os.ReadDir(ProjectSrcDirectoryPath)
 	if err != nil {
 		fmt.Printf("Error (reading source files): %v", err)
 		return
@@ -73,6 +73,7 @@ func Make(work_dir_path string) {
 
 	new_log_file := bytes.NewBufferString("") // create new log file buffer
 
+	// itterate over all the .c and .cpp files in the src directory
 	for _, src_file := range src_files {
 		if !src_file.IsDir() {
 			src_file_name := src_file.Name()                      // source file name
@@ -90,12 +91,24 @@ func Make(work_dir_path string) {
 			src_file_mod_time_now := src_file_info.ModTime().Format(TIME_FORMAT) // currently read mod time entry
 
 			if !IsCompiled(o_files, src_file_name) { // file not compiled
-				if !_compile(project_config, src_dir_path, src_file_name, src_file_ext, build_dir_o_path) {
+				if !_compile(
+					project_config,
+					ProjectSrcDirectoryPath,
+					src_file_name,
+					src_file_ext,
+					build_dir_o_path,
+				) {
 					return
 				}
 				new_log_file.WriteString(fmt.Sprintf("[%s] %s\n", src_file_mod_time_now, src_file_name))
 			} else if src_file_mod_time_before != src_file_mod_time_now { // if file is modified
-				if !_compile(project_config, src_dir_path, src_file_name, src_file_ext, build_dir_o_path) {
+				if !_compile(
+					project_config,
+					ProjectSrcDirectoryPath,
+					src_file_name,
+					src_file_ext,
+					build_dir_o_path,
+				) {
 					return
 				}
 				new_log_file.WriteString(fmt.Sprintf("[%s] %s\n", src_file_mod_time_now, src_file_name))
