@@ -11,7 +11,7 @@ import (
 	. "github.com/yashtajne/cherry/utils"
 )
 
-const Version string = "1.2.6"
+const Version string = "1.3.2"
 
 func main() {
 	pwd, err := GetWorkDir()
@@ -108,8 +108,14 @@ func main() {
 			{
 				Name:  "list",
 				Usage: "Get a list of installed libraries (packages) in the project",
+				Flags: []cli.Flag{
+					&cli.BoolFlag{
+						Name:  "vcpkg",
+						Usage: "List all vcpkg installed packages",
+					},
+				},
 				Action: func(c *cli.Context) error {
-					cmds.List()
+					cmds.List(c.Bool("vcpkg"))
 					return nil
 				},
 			},

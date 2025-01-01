@@ -11,6 +11,7 @@ func printHelpMessage() {
 	fmt.Println("  cherry make                     Build the project executable")
 	fmt.Println("  cherry run                      Run the project executable")
 	fmt.Println("  cherry help                     Display help and list commands")
+	fmt.Println("  cherry list                     Display List of installed packages")
 	fmt.Println("  cherry version                  Display version information")
 }
 
