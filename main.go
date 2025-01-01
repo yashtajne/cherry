@@ -105,6 +105,14 @@ func main() {
 					return nil
 				},
 			},
+			{
+				Name:  "list",
+				Usage: "Get a list of installed libraries (packages) in the project",
+				Action: func(c *cli.Context) error {
+					cmds.List()
+					return nil
+				},
+			},
 		},
 	}
 
