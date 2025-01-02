@@ -52,15 +52,17 @@ func Initalize(project_name string) {
 		return
 	}
 
-	create_config_file(project_name, compiler)
-	create_log_file()
 	create_build_dir()
 	create_include_dir()
 	create_lib_dir()
 	create_src_dir()
+
 	create_main_file(main_file_name)
 	create_gitignore_file()
-	fmt.Printf("Project '%s' initialized successfully!\n", project_name)
+	create_log_file()
+	create_config_file(project_name, compiler)
+
+	fmt.Printf("Project '%s' created successfully!\n", project_name)
 }
 
 func create_src_dir() {

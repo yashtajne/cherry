@@ -26,7 +26,7 @@ func main() {
 	ProjectIncludeDirectoryPath = filepath.Join(ProjectWorkDirectoryPath, "/include")
 	ProjectLibDirectoryPath = filepath.Join(ProjectWorkDirectoryPath, "/lib")
 	ProjectConfigFilePath = filepath.Join(ProjectWorkDirectoryPath, "/cherry.toml")
-	ProjectLogFilePath = filepath.Join(ProjectWorkDirectoryPath, "/cherry.log")
+	ProjectLogFilePath = filepath.Join(ProjectBuildDirectoryPath, "/cherry.log")
 
 	app := &cli.App{
 		Name:           "cherry",
