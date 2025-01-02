@@ -6,7 +6,7 @@ import (
 
 var PrintVersionMessage = `
 Cherry v%s
-Copyright (C) 2024 Yash Tajne
+Copyright (C) 2024-2025 Yash Tajne
 
 This program may be freely redistributed
 under the terms of the MIT License.

@@ -46,7 +46,7 @@ func main() {
 				Name:  "help",
 				Usage: "Show help information",
 				Action: func(c *cli.Context) error {
-					cmds.Help("")
+					fmt.Println(cli.ShowAppHelp(c))
 					return nil
 				},
 			},
