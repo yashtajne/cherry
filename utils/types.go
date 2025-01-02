@@ -1,11 +1,10 @@
 package utils
 
 const (
-	O_EXT                         = ".o"
-	C_EXT                         = ".c"
-	CPP_EXT                       = ".cpp"
-	TIME_FORMAT                   = "2006-01-02 15:04:05"
-	PACKAGE_NOT_INSTALLED_LOCALLY = "pkg_n_inst_local"
+	O_EXT       = ".o"
+	C_EXT       = ".c"
+	CPP_EXT     = ".cpp"
+	TIME_FORMAT = "2006-01-02 15:04:05"
 )
 
 type ProjectConfig struct {

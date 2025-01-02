@@ -18,9 +18,9 @@ func Run() {
 
 	exe_path := ""
 	if project_config.Build.OS == "windows" {
-		exe_path = filepath.Join(ProjectWorkDirectoryPath, "build", "out", project_config.Project.Name+".exe")
+		exe_path = filepath.Join(Project_Build_Debug_Directory_Path, "out", project_config.Project.Name+".exe")
 	} else {
-		exe_path = filepath.Join(ProjectWorkDirectoryPath, "build", "out", project_config.Project.Name)
+		exe_path = filepath.Join(Project_Build_Debug_Directory_Path, "out", project_config.Project.Name)
 	}
 
 	if _, err := os.Stat(exe_path); err != nil {

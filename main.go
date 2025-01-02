@@ -11,7 +11,7 @@ import (
 	. "github.com/yashtajne/cherry/utils"
 )
 
-const Version string = "1.3.2"
+const Version string = "1.5.8"
 
 func main() {
 	pwd, err := GetWorkDir()
@@ -20,21 +20,21 @@ func main() {
 		return
 	}
 
-	ProjectWorkDirectoryPath = pwd                                            // project work direcotry
-	ProjectSrcDirectoryPath = filepath.Join(ProjectWorkDirectoryPath, "/src") // directory for the source files
+	Project_Work_Directory_Path = pwd
 
-	ProjectBuildDirectoryPath = filepath.Join(ProjectWorkDirectoryPath, "/build")           // directory for build and debug directories
-	ProjectBuildReleaseDirectoryPath = filepath.Join(ProjectBuildDirectoryPath, "/release") // release bin directory
-	ProjectBUildDebugDirectoryPath = filepath.Join(ProjectBuildDirectoryPath, "/debug")     // debug bin directory
+	Project_Src_Directory_Path = filepath.Join(Project_Work_Directory_Path, "/src")
+	Project_Include_Directory_Path = filepath.Join(Project_Work_Directory_Path, "/include")
 
-	ProjectIncludeDirectoryPath = filepath.Join(ProjectWorkDirectoryPath, "/include")
+	Project_Build_Directory_Path = filepath.Join(Project_Work_Directory_Path, "/build")
+	Project_Build_Release_Directory_Path = filepath.Join(Project_Build_Directory_Path, "/release")
+	Project_Build_Debug_Directory_Path = filepath.Join(Project_Build_Directory_Path, "/debug")
 
-	ProjectLibDirectoryPath = filepath.Join(ProjectWorkDirectoryPath, "/lib")           // directory for build and debug directories
-	ProjectLibReleaseDirectoryPath = filepath.Join(ProjectLibDirectoryPath, "/release") // release lib directory
-	ProjectLibDebugDirectoryPath = filepath.Join(ProjectLibDirectoryPath, "/debug")     // release lib directory
+	Project_Lib_Directory_Path = filepath.Join(Project_Work_Directory_Path, "/lib")
+	Project_Lib_Release_Directory_Path = filepath.Join(Project_Lib_Directory_Path, "/release")
+	Project_Lib_Debug_Directory_Path = filepath.Join(Project_Lib_Directory_Path, "/debug")
 
-	ProjectConfigFilePath = filepath.Join(ProjectWorkDirectoryPath, "/cherry.toml")
-	ProjectLogFilePath = filepath.Join(ProjectBuildDirectoryPath, "/cherry.log")
+	Project_Config_File_Path = filepath.Join(Project_Work_Directory_Path, "/cherry.toml")
+	Project_Log_File_Path = filepath.Join(Project_Build_Directory_Path, "/cherry.log")
 
 	app := &cli.App{
 		Name:           "cherry",
@@ -85,7 +85,7 @@ func main() {
 					if c.NArg() < 1 {
 						return fmt.Errorf("Error: <package_name> not provided")
 					}
-					cmds.Add(pwd, c.Args().Get(0))
+					cmds.Add(c.Args().Get(0))
 					return nil
 				},
 			},
@@ -101,7 +101,7 @@ func main() {
 				Name:  "remove",
 				Usage: "Remove a package (library) from the project",
 				Action: func(c *cli.Context) error {
-					cmds.Remove(pwd, c.Args().Get(0))
+					cmds.Remove(c.Args().Get(0))
 					return nil
 				},
 			},

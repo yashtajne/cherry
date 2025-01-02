@@ -22,7 +22,7 @@ func Make() {
 	}
 
 	// open log file
-	log_file, err := os.OpenFile(ProjectLogFilePath, os.O_RDWR, 0644)
+	log_file, err := os.OpenFile(Project_Log_File_Path, os.O_RDWR, 0644)
 	if err != nil {
 		fmt.Printf("Error (reading log file): %v", err)
 		return
@@ -54,17 +54,17 @@ func Make() {
 		fmt.Printf("Error (scanner): %v", err)
 	}
 
-	build_dir_o_path := filepath.Join(ProjectBuildDirectoryPath, "o")
+	build_dir_o_path := filepath.Join(Project_Build_Debug_Directory_Path, "o")
 
 	// get a list of object files
-	o_files, err := os.ReadDir(filepath.Join(ProjectBuildDirectoryPath, "o"))
+	o_files, err := os.ReadDir(build_dir_o_path)
 	if err != nil {
 		fmt.Printf("Error (reading object files): %v", err)
 		return
 	}
 
 	// get a list of source files
-	src_files, err := os.ReadDir(ProjectSrcDirectoryPath)
+	src_files, err := os.ReadDir(Project_Src_Directory_Path)
 	if err != nil {
 		fmt.Printf("Error (reading source files): %v", err)
 		return
@@ -92,7 +92,7 @@ func Make() {
 			if !IsCompiled(o_files, src_file_name) { // file not compiled
 				if !_compile(
 					project_config,
-					ProjectSrcDirectoryPath,
+					Project_Src_Directory_Path,
 					src_file_name,
 					src_file_ext,
 					build_dir_o_path,
@@ -103,7 +103,7 @@ func Make() {
 			} else if src_file_mod_time_before != src_file_mod_time_now { // if file is modified
 				if !_compile(
 					project_config,
-					ProjectSrcDirectoryPath,
+					Project_Src_Directory_Path,
 					src_file_name,
 					src_file_ext,
 					build_dir_o_path,

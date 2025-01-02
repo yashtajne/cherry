@@ -20,7 +20,7 @@ func Link(project_config *ProjectConfig, o *[]string) error {
 	}
 
 	// output file path
-	output_file_path := filepath.Join(ProjectBuildDirectoryPath, "out", project_config.Project.Name)
+	output_file_path := filepath.Join(Project_Build_Debug_Directory_Path, "out", project_config.Project.Name)
 
 	// create args for link command
 	args := CreateLinkingCommandArgs(project_config)

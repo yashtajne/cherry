@@ -62,6 +62,15 @@ func SrcFileExist(src_files []os.DirEntry, o_file_name string) bool {
 	return false
 }
 
+func DirExists(dir_path string) bool {
+	info, err := os.Stat(dir_path)
+	if err != nil {
+		fmt.Printf("Error (while checking directory exists or not): %v\n", err)
+		return false
+	}
+	return info.IsDir()
+}
+
 func CopyFile(src, dst string) error {
 	sourceFile, err := os.Open(src)
 	if err != nil {

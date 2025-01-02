@@ -8,8 +8,8 @@ import (
 	. "github.com/yashtajne/cherry/utils"
 )
 
-func Remove(work_dir_path, package_name string) {
-	pkgconfg_path := filepath.Join(work_dir_path, "lib", "pkgconfig")
+func Remove(package_name string) {
+	pkgconfg_path := filepath.Join(Project_Lib_Directory_Path, "pkgconfig")
 	pc_files, err := os.ReadDir(pkgconfg_path)
 	if err != nil {
 		fmt.Printf("Error (while reading pkgconfig directory): %v", err)

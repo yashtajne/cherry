@@ -10,7 +10,7 @@ import (
 )
 
 func Initalize(project_name string) {
-	files, err := os.ReadDir(ProjectWorkDirectoryPath)
+	files, err := os.ReadDir(Project_Work_Directory_Path)
 	if err != nil {
 		fmt.Printf("Error occured invalid direcotry path: %s\n", err)
 		return
@@ -52,9 +52,13 @@ func Initalize(project_name string) {
 		return
 	}
 
-	create_build_dir()
+	create_build_dir(Project_Build_Debug_Directory_Path)
+	create_build_dir(Project_Build_Release_Directory_Path)
+
+	create_lib_dir(Project_Lib_Debug_Directory_Path)
+	create_lib_dir(Project_Lib_Release_Directory_Path)
+
 	create_include_dir()
-	create_lib_dir()
 	create_src_dir()
 
 	create_main_file(main_file_name)
@@ -66,20 +70,20 @@ func Initalize(project_name string) {
 }
 
 func create_src_dir() {
-	err := os.MkdirAll(ProjectSrcDirectoryPath, 0755)
+	err := os.MkdirAll(Project_Src_Directory_Path, 0755)
 	if err != nil {
 		fmt.Printf("Error (while creating source directory): %v\n", err)
 		return
 	}
 }
 
-func create_build_dir() {
-	err := os.MkdirAll(filepath.Join(ProjectBuildDirectoryPath, "o"), 0755)
+func create_build_dir(build_dir_path string) {
+	err := os.MkdirAll(filepath.Join(build_dir_path, "o"), 0755)
 	if err != nil {
 		fmt.Printf("Error (while creating build directory): %v\n", err)
 		return
 	}
-	err = os.MkdirAll(filepath.Join(ProjectBuildDirectoryPath, "out"), 0755)
+	err = os.MkdirAll(filepath.Join(build_dir_path, "out"), 0755)
 	if err != nil {
 		fmt.Printf("Error (while creating source directory): %v\n", err)
 		return
@@ -87,15 +91,15 @@ func create_build_dir() {
 }
 
 func create_include_dir() {
-	err := os.MkdirAll(ProjectIncludeDirectoryPath, 0755)
+	err := os.MkdirAll(Project_Include_Directory_Path, 0755)
 	if err != nil {
 		fmt.Printf("Error (while creating include directory): %v\n", err)
 		return
 	}
 }
 
-func create_lib_dir() {
-	err := os.MkdirAll(filepath.Join(ProjectLibDirectoryPath, "pkgconfig"), 0755)
+func create_lib_dir(lib_dir_path string) {
+	err := os.MkdirAll(lib_dir_path, 0755)
 	if err != nil {
 		fmt.Printf("Error (while creating lib directory): %v\n", err)
 		return
@@ -103,7 +107,7 @@ func create_lib_dir() {
 }
 
 func create_log_file() {
-	file, err := os.Create(ProjectLogFilePath)
+	file, err := os.Create(Project_Log_File_Path)
 	if err != nil {
 		fmt.Printf("Error (while creating log file): %v\n", err)
 		return
@@ -112,7 +116,7 @@ func create_log_file() {
 }
 
 func create_config_file(project_name, compiler string) {
-	err := InitConfig(ProjectWorkDirectoryPath, project_name, compiler)
+	err := InitConfig(Project_Config_File_Path, project_name, compiler)
 	if err != nil {
 		fmt.Printf("Error (while creating config file): %v\n", err)
 		return
@@ -120,14 +124,11 @@ func create_config_file(project_name, compiler string) {
 }
 
 func create_main_file(main_file_name string) {
-	main_file_path := filepath.Join(ProjectSrcDirectoryPath, main_file_name)
-
-	main_file, err := os.Create(main_file_path)
+	main_file, err := os.Create(filepath.Join(Project_Src_Directory_Path, main_file_name))
 	if err != nil {
-		fmt.Printf("Error (while creating %s file): %v\n", main_file_path, err)
+		fmt.Printf("Error (while creating .gitignore file): %v\n", err)
 		return
 	}
-
 	defer main_file.Close()
 
 	if main_file_name == "main.c" {
@@ -138,12 +139,11 @@ func create_main_file(main_file_name string) {
 }
 
 func create_gitignore_file() {
-	gitignore_file, err := os.Create(filepath.Join(ProjectWorkDirectoryPath, ".gitignore"))
+	gitignore_file, err := os.Create(filepath.Join(Project_Work_Directory_Path, ".gitignore"))
 	if err != nil {
 		fmt.Printf("Error (while creating .gitignore file): %v\n", err)
 		return
 	}
-
 	defer gitignore_file.Close()
 
 	gitignore_file.WriteString(DefaultCommandGitignoreFile)

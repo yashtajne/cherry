@@ -1,20 +1,27 @@
 package utils
 
-var ProjectWorkDirectoryPath string
-var ProjectSrcDirectoryPath string
+// error constants
+const (
+	PACKAGE_NOT_INSTALLED_LOCALLY = "package_not_installed_locally"
+	NOT_A_PACKAGE                 = "not_a_package"
+)
 
-var ProjectBuildDirectoryPath string
-var ProjectBuildReleaseDirectoryPath string
-var ProjectBUildDebugDirectoryPath string
+var Project_Work_Directory_Path string
+var Project_Src_Directory_Path string
 
-var ProjectIncludeDirectoryPath string
+var Project_Build_Directory_Path string
+var Project_Build_Release_Directory_Path string
+var Project_Build_Debug_Directory_Path string
 
-var ProjectLibDirectoryPath string
-var ProjectLibReleaseDirectoryPath string
-var ProjectLibDebugDirectoryPath string
+var Project_Include_Directory_Path string
 
-var ProjectConfigFilePath string
-var ProjectLogFilePath string
+var Project_Lib_Directory_Path string
+var Project_Lib_Release_Directory_Path string
+var Project_Lib_Debug_Directory_Path string
+
+var Project_Config_File_Path string
+
+var Project_Log_File_Path string
 
 var DefaultMainCPPFile string = `
 #include <iostream>

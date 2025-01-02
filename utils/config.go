@@ -12,7 +12,7 @@ import (
 
 func GetProjectConfig() (*ProjectConfig, error) {
 	var config ProjectConfig
-	_, err := toml.DecodeFile(ProjectConfigFilePath, &config)
+	_, err := toml.DecodeFile(Project_Config_File_Path, &config)
 	if err != nil {
 		return nil, err
 	}
@@ -20,7 +20,7 @@ func GetProjectConfig() (*ProjectConfig, error) {
 }
 
 func RemovePkgFromConfig(package_name string) {
-	data, err := os.ReadFile(ProjectConfigFilePath)
+	data, err := os.ReadFile(Project_Config_File_Path)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -47,7 +47,7 @@ func RemovePkgFromConfig(package_name string) {
 		return
 	}
 
-	err = os.WriteFile(ProjectConfigFilePath, data, os.ModePerm)
+	err = os.WriteFile(Project_Config_File_Path, data, os.ModePerm)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -55,7 +55,7 @@ func RemovePkgFromConfig(package_name string) {
 }
 
 func AddPkgToConfig(pkg Pkg) {
-	data, err := os.ReadFile(ProjectConfigFilePath)
+	data, err := os.ReadFile(Project_Config_File_Path)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -84,7 +84,7 @@ func AddPkgToConfig(pkg Pkg) {
 		return
 	}
 
-	err = os.WriteFile(ProjectConfigFilePath, data, os.ModePerm)
+	err = os.WriteFile(Project_Config_File_Path, data, os.ModePerm)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -144,12 +144,12 @@ func ReadPackageConfig(packageConfigPath string) (*Pkg, error) {
 func InitConfig(work_dir_path, project_name, compiler string) error {
 	var config ProjectConfig
 
-	config.Project.Name = project_name                   // set project name
-	config.Build.IncludeDir = work_dir_path + "/include" // set include directory path
-	config.Build.LibDir = work_dir_path + "/lib"         // set lib directory path
-	config.Build.Compiler = compiler                     // set compiler path
-	config.Build.OS = runtime.GOOS                       // set operating system path
-	config.Build.Shell = os.Getenv("SHELL")              // set shell path
+	config.Project.Name = project_name                       // set project name
+	config.Build.IncludeDir = Project_Include_Directory_Path // set include directory path
+	config.Build.LibDir = Project_Lib_Debug_Directory_Path   // set lib directory path
+	config.Build.Compiler = compiler                         // set compiler path
+	config.Build.OS = runtime.GOOS                           // set operating system path
+	config.Build.Shell = os.Getenv("SHELL")                  // set shell path
 	if config.Build.Shell == "" {
 		config.Build.Shell = os.Getenv("ComSpec") // get shell path in windows os
 	}
@@ -159,7 +159,7 @@ func InitConfig(work_dir_path, project_name, compiler string) error {
 		return err
 	}
 
-	config_file, err := os.OpenFile(ProjectConfigFilePath, os.O_WRONLY|os.O_CREATE, 0666)
+	config_file, err := os.OpenFile(Project_Config_File_Path, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return err
 	}
