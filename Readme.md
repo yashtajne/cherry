@@ -21,12 +21,15 @@ It keeps track of file modifications in a log file (`cherry.log`). When a file i
 ```sh
 ├── include/
 ├── lib/
+│   ├── release/
+│   ├── debug/
+│   └── pkgconfig/
 ├── build/
-│   ├── o/
-│   └── out/
+│   ├── release/
+│   ├── debug/
+│   └── cherry.log
 ├── src/
-├── cherry.toml
-└── cherry.log
+└── cherry.toml
 ```
 
 ### Configuration File
