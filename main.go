@@ -20,11 +20,19 @@ func main() {
 		return
 	}
 
-	ProjectWorkDirectoryPath = pwd
-	ProjectSrcDirectoryPath = filepath.Join(ProjectWorkDirectoryPath, "/src")
-	ProjectBuildDirectoryPath = filepath.Join(ProjectWorkDirectoryPath, "/build")
+	ProjectWorkDirectoryPath = pwd                                            // project work direcotry
+	ProjectSrcDirectoryPath = filepath.Join(ProjectWorkDirectoryPath, "/src") // directory for the source files
+
+	ProjectBuildDirectoryPath = filepath.Join(ProjectWorkDirectoryPath, "/build")           // directory for build and debug directories
+	ProjectBuildReleaseDirectoryPath = filepath.Join(ProjectBuildDirectoryPath, "/release") // release bin directory
+	ProjectBUildDebugDirectoryPath = filepath.Join(ProjectBuildDirectoryPath, "/debug")     // debug bin directory
+
 	ProjectIncludeDirectoryPath = filepath.Join(ProjectWorkDirectoryPath, "/include")
-	ProjectLibDirectoryPath = filepath.Join(ProjectWorkDirectoryPath, "/lib")
+
+	ProjectLibDirectoryPath = filepath.Join(ProjectWorkDirectoryPath, "/lib")           // directory for build and debug directories
+	ProjectLibReleaseDirectoryPath = filepath.Join(ProjectLibDirectoryPath, "/release") // release lib directory
+	ProjectLibDebugDirectoryPath = filepath.Join(ProjectLibDirectoryPath, "/debug")     // release lib directory
+
 	ProjectConfigFilePath = filepath.Join(ProjectWorkDirectoryPath, "/cherry.toml")
 	ProjectLogFilePath = filepath.Join(ProjectBuildDirectoryPath, "/cherry.log")
 

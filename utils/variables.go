@@ -2,9 +2,17 @@ package utils
 
 var ProjectWorkDirectoryPath string
 var ProjectSrcDirectoryPath string
+
 var ProjectBuildDirectoryPath string
+var ProjectBuildReleaseDirectoryPath string
+var ProjectBUildDebugDirectoryPath string
+
 var ProjectIncludeDirectoryPath string
+
 var ProjectLibDirectoryPath string
+var ProjectLibReleaseDirectoryPath string
+var ProjectLibDebugDirectoryPath string
+
 var ProjectConfigFilePath string
 var ProjectLogFilePath string
 
